@@ -7,34 +7,12 @@ import numpy as np
 test_data = pd.read_csv('Test.csv')
 train_data = pd.read_csv('Train.csv')
 
-def printAnim(i, j):
-    bar = [
-        "[        ]",
-        "[=       ]",
-        "[===     ]",
-        "[====    ]",
-        "[=====   ]",
-        "[======  ]",
-        "[======= ]",
-        "[========]",
-        "[ =======]",
-        "[  ======]",
-        "[   =====]",
-        "[    ====]",
-        "[     ===]",
-        "[      ==]",
-        "[       =]",
-        "[        ]",
-        "[        ]"
-    ]
-    print(" {} Creating data {}/{} ".format(bar[i%len(bar)], i, j), end = "\r")
-
 def finalizeData(list, id, i, j):
     mode = list["Segmentation"].mode()
     list = list.query("Segmentation in @mode").sort_values("Family_Size")
     segmentation = list["Segmentation"].iloc[0]
     data.append([id, segmentation])
-    printAnim(i, j)
+    printAnim(i, j, "Creating Data")
 
 def startAnalysis():
     rows = length(test_data)
@@ -59,15 +37,15 @@ def startAnalysis():
                     final_data = tmp_final
                 else:
                     continue
-        gi = 3
+        gi = 6
         for x in ["Age", "Family_Size", "Work_Experience"]:
             if(length(final_data) > 0):
-                tmp_final = final_data.iloc[(final_data[x]-person[x]).abs().argsort()[:gi]]
+                tmp_final = final_data.iloc[(final_data[x]-person[x]).abs().argsort()[:int(gi)]]
                 if(length(tmp_final) > 0):
                     final_data = tmp_final
                 else:
                     continue
-            gi = gi - 1
+            gi = gi / 3
         finalizeData(final_data, person["ID"], i, rows)
     
 data = []
@@ -75,3 +53,5 @@ startAnalysis()
 submission = pd.DataFrame(data, columns = ['ID', 'Segmentation'])
 print(submission)
 submission.to_csv('submission.csv', index=False)
+
+check_accuracy("submission.csv", "submit-0.94.csv")
