@@ -7,6 +7,27 @@ import math
 test_data = pd.read_csv('Test.csv')
 train_data = pd.read_csv('Train.csv')
 
+def printAnim(i, j):
+    bar = [
+    "[        ]",
+    "[=       ]",
+    "[===     ]",
+    "[====    ]",
+    "[=====   ]",
+    "[======  ]",
+    "[======= ]",
+    "[========]",
+    "[ =======]",
+    "[  ======]",
+    "[   =====]",
+    "[    ====]",
+    "[     ===]",
+    "[      ==]",
+    "[       =]",
+    "[        ]",
+    "[        ]"
+    ]
+    print(" {} Creating data {}/{} ".format(bar[i%len(bar)], i, j), end = "\r")
 
 def finalizeData(list, id, fam_size, i, j):
     mode = list["Segmentation"].mode()
@@ -14,7 +35,7 @@ def finalizeData(list, id, fam_size, i, j):
     index = 0
     segmentation = list["Segmentation"].iloc[index]
     data.append([id, segmentation])
-    print("Creating data {}/{}".format(i, j), end = "\r")
+    printAnim(i, j)
 
 def startAnalysis():
     rows = length(test_data)
@@ -37,7 +58,7 @@ def startAnalysis():
             {"metric":"Work_Experience", "Work_Experience": person["Work_Experience"], "min":person["Work_Experience"] - 3, "max":person["Work_Experience"] + 3},
             {"metric":"Family_Size", "Family_Size": person["Family_Size"], "min":person["Family_Size"] - 3, "max":person["Family_Size"] + 3}
         ]
-        for x in ["Gender", "Ever_Married", "Graduated", "Profession", "Spending_Score"]:
+        for x in ["Gender", "Ever_Married", "Graduated", "Profession", "Spending_Score", "Var_1"]:
             if(length(final_data) > 0):
                 tmp_final = final_data.query('{} == "{}"'.format(x, person[x]))
                 if(length(tmp_final) > 0):
