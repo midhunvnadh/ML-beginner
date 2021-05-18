@@ -15,6 +15,7 @@ def finalizeData(list, id, i, j):
     printAnim(i, j, "Creating Data")
 
 def startAnalysis():
+    cls()
     rows = length(test_data)
     for i in range (0, rows):
         final_data = train_data
@@ -30,28 +31,41 @@ def startAnalysis():
             'Family_Size':test_data["Family_Size"][i],
             'Var_1':test_data["Var_1"][i],
         }
-        for x in ["Gender", "Ever_Married", "Graduated", "Profession", "Spending_Score", "Var_1"]:
-            if(length(final_data) > 0):
-                tmp_final = final_data.query('{} == "{}"'.format(x, person[x]))
-                if(length(tmp_final) > 0):
-                    final_data = tmp_final
-                else:
-                    continue
-        gi = 6
-        for x in ["Age", "Family_Size", "Work_Experience"]:
-            if(length(final_data) > 0):
-                tmp_final = final_data.iloc[(final_data[x]-person[x]).abs().argsort()[:int(gi)]]
-                if(length(tmp_final) > 0):
-                    final_data = tmp_final
-                else:
-                    continue
-            gi = gi / 3
+        alg_order = [
+            {'met':"Gender", 'num':False},
+            {'met':"Ever_Married", 'num':False},
+            {'met':"Graduated", 'num':False},
+            {'met':"Profession", 'num':False},
+            {'met':"Spending_Score", 'num':False},
+            {'met':"Var_1", 'num':False},
+            {'met':"Age", 'num':True, 'gi':10},
+            {'met':"Family_Size", 'num':True, 'gi':5},
+            {'met':"Work_Experience", 'num':True, 'gi':1}
+        ]
+        for x in alg_order:
+            if(x["num"]):
+                if(length(final_data) > 0):
+                    tmp_final = final_data.iloc[(final_data[x["met"]]-person[x["met"]]).abs().argsort()[:int(x['gi'])]]
+                    if(length(tmp_final) > 0):
+                        final_data = tmp_final
+                    else:
+                        continue
+            else:
+                if(length(final_data) > 0):
+                    tmp_final = final_data.query('{} == "{}"'.format(x["met"], person[x["met"]]))
+                    if(length(tmp_final) > 0):
+                        final_data = tmp_final
+                    else:
+                        continue
         finalizeData(final_data, person["ID"], i, rows)
     
 data = []
 startAnalysis()
+print ("\033[A                                        \033[A")
 submission = pd.DataFrame(data, columns = ['ID', 'Segmentation'])
 print(submission)
-submission.to_csv('submission.csv', index=False)
 
-check_accuracy("submission.csv", "submit-0.94.csv")
+filename = 'submission.csv'
+submission.to_csv(filename, index=False)
+
+check_accuracy(filename)
