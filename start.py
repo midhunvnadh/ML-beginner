@@ -1,3 +1,4 @@
+#! /bin/python3
 from numpy.lib.function_base import append
 from functions import *
 import pandas as pd
@@ -58,13 +59,13 @@ def startAnalysis():
             {"metric":"Work_Experience", "Work_Experience": person["Work_Experience"], "min":person["Work_Experience"] - 3, "max":person["Work_Experience"] + 3},
             {"metric":"Family_Size", "Family_Size": person["Family_Size"], "min":person["Family_Size"] - 3, "max":person["Family_Size"] + 3}
         ]
-        for x in ["Gender", "Ever_Married", "Graduated", "Profession", "Spending_Score", "Var_1"]:
+        for x in ["Gender", "Ever_Married", "Graduated", "Profession", "Spending_Score", "Var_1", "Family_Size", "Work_Experience"]:
             if(length(final_data) > 0):
                 tmp_final = final_data.query('{} == "{}"'.format(x, person[x]))
                 if(length(tmp_final) > 0):
                     final_data = tmp_final
                 else:
-                    continue;
+                    continue
 
         for x in fns:
             if(length(final_data) > 0):
